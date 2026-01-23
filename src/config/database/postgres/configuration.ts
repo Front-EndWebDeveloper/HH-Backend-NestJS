@@ -1,0 +1,16 @@
+export default () => ({
+  database: {
+    type: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: parseInt(process.env.DB_PORT || '5432', 10),
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'hh_backend',
+    synchronize: process.env.DB_SYNCHRONIZE === 'true',
+    logging: process.env.DB_LOGGING === 'true',
+    migrationsRun: process.env.DB_MIGRATIONS_RUN === 'true',
+    migrations: ['dist/database/migrations/*.js'],
+    entities: ['dist/**/*.entity.js'],
+  },
+});
+
