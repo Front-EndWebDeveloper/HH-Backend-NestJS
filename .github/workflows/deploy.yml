@@ -57,13 +57,24 @@ jobs:
             cd /var/www/hh-backend
             
             # Pull latest changes
+            echo "Fetching latest code..."
             git fetch origin
             git reset --hard origin/main
             
+            # Clean up any orphaned files (files not tracked by git)
+            echo "Cleaning up orphaned files..."
+            git clean -fd
+            
+            # Remove old build artifacts
+            echo "Cleaning build artifacts..."
+            rm -rf dist
+            
             # Install all dependencies (including dev dependencies needed for build)
+            echo "Installing dependencies..."
             npm install --legacy-peer-deps
             
             # Build application
+            echo "Building application..."
             npm run build
             
             # Run database migrations
