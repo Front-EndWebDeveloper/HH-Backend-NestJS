@@ -207,6 +207,9 @@ export class AuthService {
     }
 
     // Check if token is expired (24 hours)
+    if (!user.email_verification_sent_at) {
+      throw new BadRequestException('Verification token has expired');
+    }
     const tokenAge =
       Date.now() - new Date(user.email_verification_sent_at).getTime();
     const twentyFourHours = 24 * 60 * 60 * 1000;
@@ -326,6 +329,9 @@ export class AuthService {
     }
 
     // Check if token is expired (1 hour)
+    if (!user.password_reset_sent_at) {
+      throw new BadRequestException('Reset token has expired');
+    }
     const tokenAge =
       Date.now() - new Date(user.password_reset_sent_at).getTime();
     const oneHour = 60 * 60 * 1000;
@@ -462,13 +468,17 @@ export class AuthService {
       roles,
     };
 
+    const accessTokenExpiresIn = this.configService.get<string>('JWT_EXPIRES_IN') || '1h';
+    const refreshTokenExpiresIn = this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d';
+
+    // Type assertion needed: expiresIn accepts string values like '1h', '7d' but TypeScript expects a specific StringValue type
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: this.configService.get<string>('JWT_EXPIRES_IN') || '1h',
-    });
+      expiresIn: accessTokenExpiresIn,
+    } as Parameters<typeof this.jwtService.sign>[1]);
 
     const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: this.configService.get<string>('JWT_REFRESH_EXPIRES_IN') || '7d',
-    });
+      expiresIn: refreshTokenExpiresIn,
+    } as Parameters<typeof this.jwtService.sign>[1]);
 
     return { accessToken, refreshToken };
   }

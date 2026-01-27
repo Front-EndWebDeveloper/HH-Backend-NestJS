@@ -32,31 +32,31 @@ export class User {
   email_verified: boolean;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  email_verification_token: string;
+  email_verification_token: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  email_verification_sent_at: Date;
+  email_verification_sent_at: Date | null;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  password_reset_token: string;
+  password_reset_token: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  password_reset_sent_at: Date;
+  password_reset_sent_at: Date | null;
 
   @Column({ type: 'boolean', default: false })
   is_two_fa_enabled: boolean;
 
   @Column({ type: 'text', nullable: true, select: false })
-  totp_secret: string;
+  totp_secret: string | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  totp_secret_created_at: Date;
+  totp_secret_created_at: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  last_2fa_verified_at: Date;
+  last_2fa_verified_at: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
-  last_login: Date;
+  last_login: Date | null;
 
   // HIPAA Compliance: Audit fields
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

@@ -4,21 +4,22 @@ import { UserWithRolesInterface } from '../interfaces/user-with-roles.interface'
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  handleRequest(
+  handleRequest<TUser = any>(
     err: any,
     user: any,
     info: any,
     context: ExecutionContext,
-  ): UserWithRolesInterface {
+    status?: any,
+  ): TUser {
     // Transform user object to include roles
     if (user) {
       return {
         userId: user.userId,
         email: user.email,
         roles: user.roles || [],
-      };
+      } as TUser;
     }
-    return super.handleRequest(err, user, info, context);
+    return super.handleRequest(err, user, info, context, status);
   }
 }
 
