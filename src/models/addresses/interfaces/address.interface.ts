@@ -9,4 +9,3 @@ export interface AddressInterface {
   createdAt: Date;
   updatedAt: Date;
 }
-

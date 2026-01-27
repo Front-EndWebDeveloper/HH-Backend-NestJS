@@ -29,4 +29,3 @@ export class UserSeederService {
     console.log('Users seeded successfully');
   }
 }
-

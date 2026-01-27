@@ -160,4 +160,3 @@ export class PatientProfile {
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 }
-

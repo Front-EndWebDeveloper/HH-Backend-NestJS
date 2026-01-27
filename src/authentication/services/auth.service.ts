@@ -46,9 +46,7 @@ export class AuthService {
    */
   async register(registerDto: RegisterDto): Promise<{ message: string }> {
     // Check if user already exists
-    const existingUser = await this.userRepository.findByEmail(
-      registerDto.email,
-    );
+    const existingUser = await this.userRepository.findByEmail(registerDto.email);
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
@@ -73,10 +71,7 @@ export class AuthService {
 
     // Send verification email
     try {
-      await this.emailService.sendVerificationEmail(
-        registerDto.email,
-        verificationToken,
-      );
+      await this.emailService.sendVerificationEmail(registerDto.email, verificationToken);
     } catch (error) {
       this.logger.error('Failed to send verification email', error);
       // Don't throw - user is created, they can request resend
@@ -85,37 +80,26 @@ export class AuthService {
     this.logger.log(`User registered: ${this.maskEmail(registerDto.email)}`);
 
     return {
-      message:
-        'Registration successful. Please check your email to verify your account.',
+      message: 'Registration successful. Please check your email to verify your account.',
     };
   }
 
   /**
    * Login user with optional 2FA
    */
-  async login(
-    loginDto: LoginDto,
-    twoFactorToken?: string,
-  ): Promise<AuthResponseInterface> {
+  async login(loginDto: LoginDto, twoFactorToken?: string): Promise<AuthResponseInterface> {
     // Find user with password
-    const user = await this.userRepository.findByEmailWithPassword(
-      loginDto.email,
-    );
+    const user = await this.userRepository.findByEmailWithPassword(loginDto.email);
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
+    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
 
     if (!isPasswordValid) {
-      this.logger.warn(
-        `Failed login attempt for: ${this.maskEmail(loginDto.email)}`,
-      );
+      this.logger.warn(`Failed login attempt for: ${this.maskEmail(loginDto.email)}`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -126,9 +110,7 @@ export class AuthService {
 
     // Check if email is verified
     if (!user.email_verified) {
-      throw new UnauthorizedException(
-        'Please verify your email before logging in',
-      );
+      throw new UnauthorizedException('Please verify your email before logging in');
     }
 
     // Check if 2FA is enabled
@@ -154,10 +136,7 @@ export class AuthService {
         throw new BadRequestException('2FA is enabled but secret is missing');
       }
 
-      const isValid2FA = this.twoFactorService.verifyToken(
-        twoFactorToken,
-        user.totp_secret,
-      );
+      const isValid2FA = this.twoFactorService.verifyToken(twoFactorToken, user.totp_secret);
 
       if (!isValid2FA) {
         throw new UnauthorizedException('Invalid 2FA token');
@@ -198,9 +177,7 @@ export class AuthService {
   async verifyEmail(verifyEmailDto: VerifyEmailDto): Promise<{
     message: string;
   }> {
-    const user = await this.userRepository.findByVerificationToken(
-      verifyEmailDto.token,
-    );
+    const user = await this.userRepository.findByVerificationToken(verifyEmailDto.token);
 
     if (!user) {
       throw new NotFoundException('Invalid or expired verification token');
@@ -210,8 +187,7 @@ export class AuthService {
     if (!user.email_verification_sent_at) {
       throw new BadRequestException('Verification token has expired');
     }
-    const tokenAge =
-      Date.now() - new Date(user.email_verification_sent_at).getTime();
+    const tokenAge = Date.now() - new Date(user.email_verification_sent_at).getTime();
     const twentyFourHours = 24 * 60 * 60 * 1000;
 
     if (tokenAge > twentyFourHours) {
@@ -239,8 +215,7 @@ export class AuthService {
     if (!user) {
       // Don't reveal if user exists
       return {
-        message:
-          'If an account exists with this email, a verification email has been sent.',
+        message: 'If an account exists with this email, a verification email has been sent.',
       };
     }
 
@@ -271,18 +246,13 @@ export class AuthService {
   /**
    * Request password reset
    */
-  async forgotPassword(
-    forgotPasswordDto: ForgotPasswordDto,
-  ): Promise<{ message: string }> {
-    const user = await this.userRepository.findByEmail(
-      forgotPasswordDto.email,
-    );
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<{ message: string }> {
+    const user = await this.userRepository.findByEmail(forgotPasswordDto.email);
 
     if (!user) {
       // Don't reveal if user exists
       return {
-        message:
-          'If an account exists with this email, a password reset email has been sent.',
+        message: 'If an account exists with this email, a password reset email has been sent.',
       };
     }
 
@@ -295,34 +265,24 @@ export class AuthService {
 
     // Send email
     try {
-      await this.emailService.sendPasswordResetEmail(
-        forgotPasswordDto.email,
-        resetToken,
-      );
+      await this.emailService.sendPasswordResetEmail(forgotPasswordDto.email, resetToken);
     } catch (error) {
       this.logger.error('Failed to send password reset email', error);
       throw new BadRequestException('Failed to send password reset email');
     }
 
-    this.logger.log(
-      `Password reset requested for: ${this.maskEmail(forgotPasswordDto.email)}`,
-    );
+    this.logger.log(`Password reset requested for: ${this.maskEmail(forgotPasswordDto.email)}`);
 
     return {
-      message:
-        'If an account exists with this email, a password reset email has been sent.',
+      message: 'If an account exists with this email, a password reset email has been sent.',
     };
   }
 
   /**
    * Reset password with token
    */
-  async resetPassword(
-    resetPasswordDto: ResetPasswordDto,
-  ): Promise<{ message: string }> {
-    const user = await this.userRepository.findByPasswordResetToken(
-      resetPasswordDto.token,
-    );
+  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<{ message: string }> {
+    const user = await this.userRepository.findByPasswordResetToken(resetPasswordDto.token);
 
     if (!user) {
       throw new NotFoundException('Invalid or expired reset token');
@@ -332,8 +292,7 @@ export class AuthService {
     if (!user.password_reset_sent_at) {
       throw new BadRequestException('Reset token has expired');
     }
-    const tokenAge =
-      Date.now() - new Date(user.password_reset_sent_at).getTime();
+    const tokenAge = Date.now() - new Date(user.password_reset_sent_at).getTime();
     const oneHour = 60 * 60 * 1000;
 
     if (tokenAge > oneHour) {
@@ -377,9 +336,7 @@ export class AuthService {
     const secretData = await this.twoFactorService.generateSecret(user.email);
 
     // Encrypt and store secret (but don't enable yet - user needs to verify first)
-    const encryptedSecret = this.twoFactorService.encryptSecret(
-      secretData.secret,
-    );
+    const encryptedSecret = this.twoFactorService.encryptSecret(secretData.secret);
     user.totp_secret = encryptedSecret;
     user.totp_secret_created_at = new Date();
 
@@ -395,10 +352,7 @@ export class AuthService {
   /**
    * Verify and enable 2FA
    */
-  async verify2FASetup(
-    userId: string,
-    verify2FADto: Verify2FADto,
-  ): Promise<{ message: string }> {
+  async verify2FASetup(userId: string, verify2FADto: Verify2FADto): Promise<{ message: string }> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: ['id', 'totp_secret', 'is_two_fa_enabled'],
@@ -413,10 +367,7 @@ export class AuthService {
     }
 
     // Verify token
-    const isValid = this.twoFactorService.verifyToken(
-      verify2FADto.token,
-      user.totp_secret,
-    );
+    const isValid = this.twoFactorService.verifyToken(verify2FADto.token, user.totp_secret);
 
     if (!isValid) {
       throw new UnauthorizedException('Invalid 2FA token');
@@ -520,4 +471,3 @@ export class AuthService {
     return `${maskedLocal}@${domain}`;
   }
 }
-

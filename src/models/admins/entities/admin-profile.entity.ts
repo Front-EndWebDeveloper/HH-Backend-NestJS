@@ -55,4 +55,3 @@ export class AdminProfile {
   @JoinColumn({ name: 'admin_id' })
   admin: Admin;
 }
-

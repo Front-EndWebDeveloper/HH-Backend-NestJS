@@ -3,4 +3,3 @@ export interface UserWithRolesInterface {
   email: string;
   roles: string[];
 }
-

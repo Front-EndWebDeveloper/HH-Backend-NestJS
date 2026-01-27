@@ -11,4 +11,3 @@ import { Address } from './entities/address.entity';
   exports: [AddressesService],
 })
 export class AddressesModule {}
-

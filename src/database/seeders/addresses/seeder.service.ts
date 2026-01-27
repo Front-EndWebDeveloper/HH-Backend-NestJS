@@ -17,4 +17,3 @@ export class AddressSeederService {
     console.log('Addresses seeded successfully');
   }
 }
-

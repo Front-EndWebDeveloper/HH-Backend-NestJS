@@ -3,4 +3,3 @@ export interface TotpSecretInterface {
   qrCodeUrl: string;
   manualEntryKey: string;
 }
-

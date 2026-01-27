@@ -51,19 +51,12 @@ export class Organization {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(
-    () => OrganizationTypeAssignment,
-    (assignment) => assignment.organization,
-  )
+  @OneToMany(() => OrganizationTypeAssignment, (assignment) => assignment.organization)
   typeAssignments: OrganizationTypeAssignment[];
 
   @OneToOne(() => OrganizationProfile, (profile) => profile.organization)
   profile: OrganizationProfile;
 
-  @OneToMany(
-    () => OrganizationRolePermission,
-    (permission) => permission.organization,
-  )
+  @OneToMany(() => OrganizationRolePermission, (permission) => permission.organization)
   rolePermissions: OrganizationRolePermission[];
 }
-

@@ -32,21 +32,14 @@ export class RoleService {
   /**
    * Check if user has any of the specified roles
    */
-  async userHasAnyRole(
-    userRoles: string[],
-    roleNames: string[],
-  ): Promise<boolean> {
+  async userHasAnyRole(userRoles: string[], roleNames: string[]): Promise<boolean> {
     return roleNames.some((roleName) => userRoles.includes(roleName));
   }
 
   /**
    * Check if user has all of the specified roles
    */
-  async userHasAllRoles(
-    userRoles: string[],
-    roleNames: string[],
-  ): Promise<boolean> {
+  async userHasAllRoles(userRoles: string[], roleNames: string[]): Promise<boolean> {
     return roleNames.every((roleName) => userRoles.includes(roleName));
   }
 }
-

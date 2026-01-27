@@ -12,14 +12,16 @@ export class ArrayHelper {
   }
 
   static groupBy<T>(array: T[], key: keyof T): Record<string, T[]> {
-    return array.reduce((groups, item) => {
-      const group = String(item[key]);
-      if (!groups[group]) {
-        groups[group] = [];
-      }
-      groups[group].push(item);
-      return groups;
-    }, {} as Record<string, T[]>);
+    return array.reduce(
+      (groups, item) => {
+        const group = String(item[key]);
+        if (!groups[group]) {
+          groups[group] = [];
+        }
+        groups[group].push(item);
+        return groups;
+      },
+      {} as Record<string, T[]>,
+    );
   }
 }
-

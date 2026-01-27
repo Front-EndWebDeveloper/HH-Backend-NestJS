@@ -6,4 +6,3 @@ export class AuthenticationService {
     return { status: true };
   }
 }
-

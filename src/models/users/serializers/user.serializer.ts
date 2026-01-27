@@ -16,4 +16,3 @@ export class UserSerializer extends ModelSerializer {
     };
   }
 }
-

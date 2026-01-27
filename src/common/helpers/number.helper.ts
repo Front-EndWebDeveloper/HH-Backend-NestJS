@@ -11,4 +11,3 @@ export class NumberHelper {
     return Number(value.toFixed(decimals));
   }
 }
-

@@ -10,4 +10,3 @@ export class UserMiddleware implements NestMiddleware {
     next();
   }
 }
-

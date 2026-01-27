@@ -45,4 +45,3 @@ export class OrganizationRolePermission {
   @JoinColumn({ name: 'organization_id' })
   organization: Organization;
 }
-

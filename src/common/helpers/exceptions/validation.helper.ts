@@ -18,4 +18,3 @@ export class ValidationHelper {
     return formatted;
   }
 }
-

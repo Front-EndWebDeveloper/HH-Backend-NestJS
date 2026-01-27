@@ -13,4 +13,3 @@ export class ApiConfigService {
     return this.configService.get<string>('api.prefix', 'v1/api');
   }
 }
-

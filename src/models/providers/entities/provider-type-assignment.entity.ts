@@ -41,4 +41,3 @@ export class ProviderTypeAssignment {
   @JoinColumn({ name: 'provider_type_id' })
   providerType: ProviderType;
 }
-

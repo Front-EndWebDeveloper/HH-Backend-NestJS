@@ -22,11 +22,10 @@ export function UniqueUserEmail(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
-      propertyName: propertyName,
+      propertyName,
       options: validationOptions,
       constraints: [],
       validator: UniqueUserEmailConstraint,
     });
   };
 }
-

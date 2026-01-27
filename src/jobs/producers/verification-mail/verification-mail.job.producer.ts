@@ -26,4 +26,3 @@ export class VerificationMailJobProducer {
     console.log('Verification email job producer - install @nestjs/bull to enable');
   }
 }
-

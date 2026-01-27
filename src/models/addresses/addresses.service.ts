@@ -26,4 +26,3 @@ export class AddressesService {
     return this.addressSerializer.serialize(savedAddress);
   }
 }
-

@@ -10,4 +10,3 @@ export class UserEntityPipe implements PipeTransform {
     return value;
   }
 }
-

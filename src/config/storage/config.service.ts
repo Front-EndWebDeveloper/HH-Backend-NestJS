@@ -33,4 +33,3 @@ export class StorageConfigService {
     return this.type === 's3';
   }
 }
-

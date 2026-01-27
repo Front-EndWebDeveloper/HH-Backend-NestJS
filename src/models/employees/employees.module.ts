@@ -14,4 +14,3 @@ import { OrganizationsModule } from '../organizations/organizations.module';
   exports: [TypeOrmModule],
 })
 export class EmployeesModule {}
-

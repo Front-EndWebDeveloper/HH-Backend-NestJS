@@ -19,4 +19,3 @@ export class UserWithRolesSerializer {
     return users.map((user) => this.serialize(user));
   }
 }
-

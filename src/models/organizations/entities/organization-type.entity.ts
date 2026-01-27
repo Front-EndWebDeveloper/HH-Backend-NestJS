@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  CreateDateColumn,
-  OneToMany,
-  Index,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, OneToMany, Index } from 'typeorm';
 import { OrganizationTypeAssignment } from './organization-type-assignment.entity';
 
 @Entity('organization_types')
@@ -21,10 +14,6 @@ export class OrganizationType {
   created_at: Date;
 
   // Relations
-  @OneToMany(
-    () => OrganizationTypeAssignment,
-    (assignment) => assignment.organizationType,
-  )
+  @OneToMany(() => OrganizationTypeAssignment, (assignment) => assignment.organizationType)
   assignments: OrganizationTypeAssignment[];
 }
-

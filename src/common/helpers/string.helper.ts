@@ -24,4 +24,3 @@ export class StringHelper {
     return result;
   }
 }
-

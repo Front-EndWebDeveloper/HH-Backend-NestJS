@@ -21,4 +21,3 @@ import { QueueConfigService } from '../../../config/queue/config.service';
   exports: ['QUEUE_CONFIG'],
 })
 export class RedisQueueProviderModule {}
-

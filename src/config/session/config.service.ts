@@ -13,4 +13,3 @@ export class SessionConfigService {
     return this.configService.get<number>('session.maxAge', 86400000);
   }
 }
-

@@ -1,7 +1,4 @@
-export const verificationMailContent = (
-  firstName: string,
-  verificationLink: string,
-): string => {
+export const verificationMailContent = (firstName: string, verificationLink: string): string => {
   return `
     <!DOCTYPE html>
     <html>
@@ -19,4 +16,3 @@ export const verificationMailContent = (
     </html>
   `;
 };
-

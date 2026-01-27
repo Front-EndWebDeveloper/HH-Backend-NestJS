@@ -41,4 +41,3 @@ export class OrganizationTypeAssignment {
   @JoinColumn({ name: 'organization_type_id' })
   organizationType: OrganizationType;
 }
-

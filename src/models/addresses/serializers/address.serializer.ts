@@ -16,4 +16,3 @@ export class AddressSerializer extends ModelSerializer {
     };
   }
 }
-

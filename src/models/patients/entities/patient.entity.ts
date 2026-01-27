@@ -34,4 +34,3 @@ export class Patient {
   @OneToOne(() => PatientProfile, (profile) => profile.patient)
   profile: PatientProfile;
 }
-

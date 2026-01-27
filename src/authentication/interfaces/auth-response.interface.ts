@@ -10,4 +10,3 @@ export interface AuthResponseInterface {
   };
   requiresTwoFactor?: boolean;
 }
-

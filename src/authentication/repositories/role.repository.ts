@@ -9,11 +9,10 @@ export class RoleRepository extends Repository<Role> {
   }
 
   async findByName(name: string): Promise<Role | null> {
-    return this.findOne({ where: { name } }) as Promise<Role | null>;
+    return this.findOne({ where: { name } });
   }
 
   async findAllRoles(): Promise<Role[]> {
     return this.find({ order: { id: 'ASC' } });
   }
 }
-

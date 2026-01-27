@@ -40,9 +40,7 @@ export class AuthenticationController {
 
   @Post('login/2fa')
   @HttpCode(HttpStatus.OK)
-  async loginWith2FA(
-    @Body() loginDto: LoginDto & Authenticate2FADto,
-  ) {
+  async loginWith2FA(@Body() loginDto: LoginDto & Authenticate2FADto) {
     const result = await this.authService.login(loginDto, loginDto.token);
     return SuccessHelper.createSuccessResponse(result);
   }
@@ -78,9 +76,7 @@ export class AuthenticationController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-    const result = await this.authService.refreshToken(
-      refreshTokenDto.refreshToken,
-    );
+    const result = await this.authService.refreshToken(refreshTokenDto.refreshToken);
     return SuccessHelper.createSuccessResponse(result);
   }
 
@@ -95,14 +91,8 @@ export class AuthenticationController {
   @Post('2fa/verify')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async verify2FA(
-    @Request() req: any,
-    @Body() verify2FADto: Verify2FADto,
-  ) {
-    const result = await this.authService.verify2FASetup(
-      req.user.userId,
-      verify2FADto,
-    );
+  async verify2FA(@Request() req: any, @Body() verify2FADto: Verify2FADto) {
+    const result = await this.authService.verify2FASetup(req.user.userId, verify2FADto);
     return SuccessHelper.createSuccessResponse(result);
   }
 

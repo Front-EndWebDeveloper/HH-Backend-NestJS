@@ -14,4 +14,3 @@ export class SuccessSerializer {
     this.timestamp = new Date().toISOString();
   }
 }
-

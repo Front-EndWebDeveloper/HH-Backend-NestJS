@@ -9,4 +9,3 @@ export interface UserInterface {
   createdAt: Date;
   updatedAt: Date;
 }
-

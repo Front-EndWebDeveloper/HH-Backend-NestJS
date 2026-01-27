@@ -5,4 +5,3 @@ export abstract class ModelSerializer {
     return data.map((item) => this.serialize(item));
   }
 }
-

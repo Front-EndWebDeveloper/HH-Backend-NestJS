@@ -16,4 +16,3 @@ export const SETTINGS = {
     SESSION_TIMEOUT_MINUTES: 15,
   },
 } as const;
-

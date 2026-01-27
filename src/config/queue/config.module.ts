@@ -9,4 +9,3 @@ import configuration from './configuration';
   exports: [QueueConfigService],
 })
 export class QueueConfigModule {}
-

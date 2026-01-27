@@ -184,4 +184,3 @@ export class OrganizationProfile {
   @JoinColumn({ name: 'organization_type_id' })
   organizationType: OrganizationType;
 }
-

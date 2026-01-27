@@ -9,4 +9,3 @@ import { Address } from '../../../models/addresses/entities/address.entity';
   exports: [AddressSeederService],
 })
 export class AddressSeederModule {}
-

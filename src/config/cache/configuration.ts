@@ -6,4 +6,3 @@ export default () => ({
     ttl: parseInt(process.env.CACHE_TTL || '3600', 10),
   },
 });
-

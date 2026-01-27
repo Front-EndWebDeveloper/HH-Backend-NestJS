@@ -9,12 +9,7 @@ export class SuccessHelper {
     };
   }
 
-  static createPaginatedResponse(
-    data: any[],
-    total: number,
-    page: number,
-    limit: number,
-  ) {
+  static createPaginatedResponse(data: any[], total: number, page: number, limit: number) {
     return {
       success: true,
       statusCode: 200,
@@ -29,4 +24,3 @@ export class SuccessHelper {
     };
   }
 }
-

@@ -82,4 +82,3 @@ export class ProviderProfile {
   @JoinColumn({ name: 'provider_id' })
   provider: Provider;
 }
-

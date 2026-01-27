@@ -21,10 +21,7 @@ export class OrganizationRoleService {
   /**
    * Get user's role in an organization
    */
-  async getUserRoleInOrganization(
-    userId: string,
-    organizationId: string,
-  ): Promise<string | null> {
+  async getUserRoleInOrganization(userId: string, organizationId: string): Promise<string | null> {
     const employee = await this.employeeRepository.findOne({
       where: {
         user_id: userId,
@@ -78,11 +75,7 @@ export class OrganizationRoleService {
   /**
    * Check if role has permission for a feature in organization
    */
-  async hasPermission(
-    organizationId: string,
-    role: string,
-    feature: string,
-  ): Promise<boolean> {
+  async hasPermission(organizationId: string, role: string, feature: string): Promise<boolean> {
     const permission = await this.permissionRepository.findOne({
       where: {
         organization_id: organizationId,
@@ -94,4 +87,3 @@ export class OrganizationRoleService {
     return permission?.has_access || false;
   }
 }
-

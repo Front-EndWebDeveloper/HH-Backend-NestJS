@@ -22,4 +22,3 @@ import { CacheConfigService } from '../../../config/cache/config.service';
   exports: ['CACHE_CONFIG'],
 })
 export class RedisCacheProviderModule {}
-

@@ -8,4 +8,3 @@ import { EmailConfigModule } from '../../../config/email/config.module';
   exports: [EmailService],
 })
 export class EmailModule {}
-

@@ -9,4 +9,3 @@ export class AssignOrganizationRoleDto {
   @IsString()
   role: string; // ADMIN | PROVIDER | STAFF | HR | etc.
 }
-

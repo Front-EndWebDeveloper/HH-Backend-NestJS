@@ -13,4 +13,3 @@ export interface FilterInput {
   operator: string;
   value: any;
 }
-

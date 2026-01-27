@@ -6,15 +6,10 @@ export class QueryHelper {
 
   static parseLimit(limit?: string | number, maxLimit: number = 100): number {
     const parsed = typeof limit === 'string' ? parseInt(limit, 10) : limit || 10;
-    return isNaN(parsed) || parsed < 1
-      ? 10
-      : parsed > maxLimit
-        ? maxLimit
-        : parsed;
+    return isNaN(parsed) || parsed < 1 ? 10 : parsed > maxLimit ? maxLimit : parsed;
   }
 
   static getSkip(page: number, limit: number): number {
     return (page - 1) * limit;
   }
 }
-

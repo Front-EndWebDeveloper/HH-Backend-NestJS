@@ -57,4 +57,3 @@ export class EmployeeProfile {
   @JoinColumn({ name: 'employee_id' })
   employee: Employee;
 }
-

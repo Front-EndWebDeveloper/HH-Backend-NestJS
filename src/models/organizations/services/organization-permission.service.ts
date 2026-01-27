@@ -46,9 +46,7 @@ export class OrganizationPermissionService {
   /**
    * Get all permissions for an organization
    */
-  async getOrganizationPermissions(
-    organizationId: string,
-  ): Promise<OrganizationRolePermission[]> {
+  async getOrganizationPermissions(organizationId: string): Promise<OrganizationRolePermission[]> {
     return this.permissionRepository.find({
       where: { organization_id: organizationId },
       order: { role: 'ASC', feature: 'ASC' },
@@ -70,4 +68,3 @@ export class OrganizationPermissionService {
     });
   }
 }
-

@@ -25,4 +25,3 @@ export class AppConfigService {
     return this.environment === 'production';
   }
 }
-

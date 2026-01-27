@@ -4,4 +4,3 @@ export default () => ({
     prefix: process.env.API_PREFIX || 'v1/api',
   },
 });
-

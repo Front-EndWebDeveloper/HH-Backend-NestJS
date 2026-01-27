@@ -1,9 +1,5 @@
 export class ErrorHelper {
-  static createErrorResponse(
-    message: string,
-    statusCode: number,
-    errors?: any,
-  ) {
+  static createErrorResponse(message: string, statusCode: number, errors?: any) {
     return {
       success: false,
       statusCode,
@@ -13,4 +9,3 @@ export class ErrorHelper {
     };
   }
 }
-

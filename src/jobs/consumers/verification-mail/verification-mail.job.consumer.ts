@@ -1,6 +1,6 @@
 // Note: Install @nestjs/bull and bull for full implementation
 // npm install @nestjs/bull bull
-// 
+//
 // import { Processor, Process } from '@nestjs/bull';
 // import { Job } from 'bull';
 //
@@ -15,4 +15,3 @@
 
 // Placeholder export to prevent import errors
 export class VerificationMailJobConsumer {}
-

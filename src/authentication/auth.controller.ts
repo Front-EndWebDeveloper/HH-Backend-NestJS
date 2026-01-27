@@ -10,4 +10,3 @@ export class AuthenticationController {
     return this.authenticationService.getAuthStatus();
   }
 }
-

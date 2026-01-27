@@ -38,4 +38,3 @@ import { PostgresConfigService } from '../../../config/database/postgres/config.
   ],
 })
 export class PostgresDatabaseProviderModule {}
-

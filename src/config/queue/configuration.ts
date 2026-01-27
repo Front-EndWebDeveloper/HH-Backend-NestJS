@@ -5,4 +5,3 @@ export default () => ({
     password: process.env.QUEUE_PASSWORD || '',
   },
 });
-

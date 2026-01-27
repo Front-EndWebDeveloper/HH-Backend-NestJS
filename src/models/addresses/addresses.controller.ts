@@ -17,4 +17,3 @@ export class AddressesController {
     return this.addressesService.create(createAddressDto);
   }
 }
-

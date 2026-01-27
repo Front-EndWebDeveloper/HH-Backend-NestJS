@@ -22,4 +22,3 @@ export class OrganizationContextHelper {
     return request.user?.userId || null;
   }
 }
-

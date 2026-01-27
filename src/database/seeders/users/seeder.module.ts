@@ -9,4 +9,3 @@ import { User } from '../../../models/users/entities/user.entity';
   exports: [UserSeederService],
 })
 export class UserSeederModule {}
-

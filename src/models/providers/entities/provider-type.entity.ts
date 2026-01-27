@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  CreateDateColumn,
-  OneToMany,
-  Index,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, OneToMany, Index } from 'typeorm';
 import { ProviderTypeAssignment } from './provider-type-assignment.entity';
 
 @Entity('provider_types')
@@ -21,10 +14,6 @@ export class ProviderType {
   created_at: Date;
 
   // Relations
-  @OneToMany(
-    () => ProviderTypeAssignment,
-    (assignment) => assignment.providerType,
-  )
+  @OneToMany(() => ProviderTypeAssignment, (assignment) => assignment.providerType)
   assignments: ProviderTypeAssignment[];
 }
-

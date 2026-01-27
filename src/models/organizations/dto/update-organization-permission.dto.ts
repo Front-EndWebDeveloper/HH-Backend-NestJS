@@ -13,4 +13,3 @@ export class UpdateOrganizationPermissionDto {
   @IsBoolean()
   hasAccess: boolean;
 }
-

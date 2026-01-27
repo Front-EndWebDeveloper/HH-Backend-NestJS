@@ -3,4 +3,3 @@ export const ADDRESS_TYPES = {
   WORK: 'work',
   OTHER: 'other',
 } as const;
-

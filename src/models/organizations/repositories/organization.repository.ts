@@ -12,7 +12,7 @@ export class OrganizationRepository extends Repository<Organization> {
     return this.findOne({
       where: { user_id: userId },
       relations: ['profile', 'typeAssignments', 'typeAssignments.organizationType'],
-    }) as Promise<Organization | null>;
+    });
   }
 
   async findByIdWithRelations(id: string): Promise<Organization | null> {
@@ -25,7 +25,6 @@ export class OrganizationRepository extends Repository<Organization> {
         'typeAssignments.organizationType',
         'rolePermissions',
       ],
-    }) as Promise<Organization | null>;
+    });
   }
 }
-

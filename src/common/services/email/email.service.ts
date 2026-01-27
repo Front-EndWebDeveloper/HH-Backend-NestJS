@@ -35,10 +35,7 @@ export class EmailService {
 
       this.logger.log(`Verification email sent to: ${this.maskEmail(email)}`);
     } catch (error) {
-      this.logger.error(
-        `Failed to send verification email to: ${this.maskEmail(email)}`,
-        error,
-      );
+      this.logger.error(`Failed to send verification email to: ${this.maskEmail(email)}`, error);
       throw error;
     }
   }
@@ -60,10 +57,7 @@ export class EmailService {
 
       this.logger.log(`Password reset email sent to: ${this.maskEmail(email)}`);
     } catch (error) {
-      this.logger.error(
-        `Failed to send password reset email to: ${this.maskEmail(email)}`,
-        error,
-      );
+      this.logger.error(`Failed to send password reset email to: ${this.maskEmail(email)}`, error);
       throw error;
     }
   }
@@ -79,4 +73,3 @@ export class EmailService {
     return `${maskedLocal}@${domain}`;
   }
 }
-

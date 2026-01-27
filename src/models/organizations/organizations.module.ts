@@ -21,4 +21,3 @@ import { AuthenticationModule } from '../../authentication/auth.module';
   exports: [TypeOrmModule],
 })
 export class OrganizationsModule {}
-

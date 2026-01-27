@@ -13,4 +13,3 @@ export class RequestHelper {
     return request.headers['user-agent'] || 'unknown';
   }
 }
-

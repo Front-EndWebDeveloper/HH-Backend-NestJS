@@ -13,4 +13,3 @@ export default () => ({
     entities: ['dist/**/*.entity.js'],
   },
 });
-

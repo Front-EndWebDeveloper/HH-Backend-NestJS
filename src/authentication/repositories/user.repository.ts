@@ -12,7 +12,7 @@ export class UserRepository extends Repository<User> {
     return this.findOne({
       where: { email },
       relations: ['userRoles', 'userRoles.role'],
-    }) as Promise<User | null>;
+    });
   }
 
   async findByEmailWithPassword(email: string): Promise<User | null> {
@@ -29,23 +29,18 @@ export class UserRepository extends Repository<User> {
     return this.findOne({
       where: { id },
       relations: ['userRoles', 'userRoles.role'],
-    }) as Promise<User | null>;
+    });
   }
 
-  async findByVerificationToken(
-    token: string,
-  ): Promise<User | null> {
+  async findByVerificationToken(token: string): Promise<User | null> {
     return this.findOne({
       where: { email_verification_token: token },
-    }) as Promise<User | null>;
+    });
   }
 
-  async findByPasswordResetToken(
-    token: string,
-  ): Promise<User | null> {
+  async findByPasswordResetToken(token: string): Promise<User | null> {
     return this.findOne({
       where: { password_reset_token: token },
-    }) as Promise<User | null>;
+    });
   }
 }
-

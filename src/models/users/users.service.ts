@@ -31,11 +31,11 @@ export class UsersService {
 
   /**
    * Finds a user by their email address
-   * 
+   *
    * @param email - The email address of the user to find
    * @returns Promise resolving to the serialized user interface
    * @throws NotFoundException if user with the email is not found
-   * 
+   *
    * @example
    * const user = await usersService.findByEmail('user@example.com');
    */
@@ -55,4 +55,3 @@ export class UsersService {
     return this.userSerializer.serialize(user);
   }
 }
-

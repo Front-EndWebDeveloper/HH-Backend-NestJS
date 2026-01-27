@@ -4,4 +4,3 @@ export default () => ({
     maxAge: parseInt(process.env.SESSION_MAX_AGE || '86400000', 10), // 24 hours
   },
 });
-

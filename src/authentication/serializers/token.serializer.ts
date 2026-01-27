@@ -9,4 +9,3 @@ export class TokenSerializer implements TokenInterface {
     Object.assign(this, partial);
   }
 }
-

@@ -9,4 +9,3 @@ export class ErrorSerializer {
     this.timestamp = new Date().toISOString();
   }
 }
-

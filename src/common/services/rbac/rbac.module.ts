@@ -9,4 +9,3 @@ import { AuthenticationModule } from '../../../authentication/auth.module';
   exports: [RoleService, PermissionService],
 })
 export class RbacModule {}
-

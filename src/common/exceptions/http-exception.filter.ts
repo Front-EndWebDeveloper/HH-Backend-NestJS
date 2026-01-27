@@ -1,10 +1,4 @@
-import {
-  ExceptionFilter,
-  Catch,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 @Catch(HttpException)
@@ -34,11 +28,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         typeof exceptionResponse === 'string'
           ? exceptionResponse
           : (exceptionResponse as any).message || exception.message,
-      error:
-        typeof exceptionResponse === 'object'
-          ? (exceptionResponse as any).error
-          : undefined,
+      error: typeof exceptionResponse === 'object' ? (exceptionResponse as any).error : undefined,
     });
   }
 }
-

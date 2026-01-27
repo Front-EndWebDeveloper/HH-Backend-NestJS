@@ -12,11 +12,7 @@ export class HipaaCompliantPassword implements ValidatorConstraintInterface {
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     return (
-      password.length >= minLength &&
-      hasUpperCase &&
-      hasLowerCase &&
-      hasNumbers &&
-      hasSpecialChar
+      password.length >= minLength && hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChar
     );
   }
 
@@ -24,4 +20,3 @@ export class HipaaCompliantPassword implements ValidatorConstraintInterface {
     return 'Password must be at least 12 characters long and contain uppercase, lowercase, numbers, and special characters';
   }
 }
-

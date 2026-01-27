@@ -33,13 +33,9 @@ export class Provider {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @OneToMany(
-    () => ProviderTypeAssignment,
-    (assignment) => assignment.provider,
-  )
+  @OneToMany(() => ProviderTypeAssignment, (assignment) => assignment.provider)
   typeAssignments: ProviderTypeAssignment[];
 
   @OneToOne(() => ProviderProfile, (profile) => profile.provider)
   profile: ProviderProfile;
 }
-

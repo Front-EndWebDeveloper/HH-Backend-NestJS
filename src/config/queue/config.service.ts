@@ -17,4 +17,3 @@ export class QueueConfigService {
     return this.configService.get<string>('queue.password', '');
   }
 }
-

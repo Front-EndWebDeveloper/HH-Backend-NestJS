@@ -1,5 +1,8 @@
 export class VerificationEmailTemplate {
-  static generate(verificationUrl: string, token: string): {
+  static generate(
+    verificationUrl: string,
+    token: string,
+  ): {
     subject: string;
     html: string;
     text: string;
@@ -48,4 +51,3 @@ This link will expire in 24 hours. If you didn't create an account, please ignor
     };
   }
 }
-

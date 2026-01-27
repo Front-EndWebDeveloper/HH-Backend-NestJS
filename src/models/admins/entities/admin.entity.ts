@@ -41,4 +41,3 @@ export class Admin {
   @OneToOne(() => AdminProfile, (profile) => profile.admin)
   profile: AdminProfile;
 }
-

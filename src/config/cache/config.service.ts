@@ -21,4 +21,3 @@ export class CacheConfigService {
     return this.configService.get<number>('cache.ttl', 3600);
   }
 }
-

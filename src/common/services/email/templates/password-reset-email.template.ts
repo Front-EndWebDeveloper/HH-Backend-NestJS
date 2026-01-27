@@ -1,5 +1,8 @@
 export class PasswordResetEmailTemplate {
-  static generate(passwordResetUrl: string, token: string): {
+  static generate(
+    passwordResetUrl: string,
+    token: string,
+  ): {
     subject: string;
     html: string;
     text: string;
@@ -48,4 +51,3 @@ This link will expire in 1 hour. If you didn't request a password reset, please 
     };
   }
 }
-

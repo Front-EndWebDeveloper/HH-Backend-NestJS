@@ -67,4 +67,3 @@ export class Employee {
   @OneToOne(() => EmployeeProfile, (profile) => profile.employee)
   profile: EmployeeProfile;
 }
-

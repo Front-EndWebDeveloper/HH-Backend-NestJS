@@ -8,15 +8,9 @@ import { AuthenticationModule } from '../../authentication/auth.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Provider,
-      ProviderType,
-      ProviderTypeAssignment,
-      ProviderProfile,
-    ]),
+    TypeOrmModule.forFeature([Provider, ProviderType, ProviderTypeAssignment, ProviderProfile]),
     AuthenticationModule,
   ],
   exports: [TypeOrmModule],
 })
 export class ProvidersModule {}
-

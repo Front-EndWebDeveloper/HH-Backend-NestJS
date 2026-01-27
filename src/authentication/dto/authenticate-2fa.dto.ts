@@ -7,4 +7,3 @@ export class Authenticate2FADto {
   @Matches(/^\d{6}$/, { message: 'Token must be a 6-digit number' })
   token: string;
 }
-

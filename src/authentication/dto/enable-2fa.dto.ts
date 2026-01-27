@@ -5,4 +5,3 @@ export class Enable2FADto {
   @IsEmail()
   email: string;
 }
-

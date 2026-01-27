@@ -3,4 +3,3 @@ export interface TokenInterface {
   refreshToken?: string;
   expiresIn: number;
 }
-

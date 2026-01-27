@@ -30,12 +30,7 @@ import { EmailModule } from '../common/services/email/email.module';
     EmailModule,
   ],
   controllers: [AuthenticationController],
-  providers: [
-    AuthService,
-    JwtStrategy,
-    UserRepository,
-    RoleRepository,
-  ],
+  providers: [AuthService, JwtStrategy, UserRepository, RoleRepository],
   exports: [
     AuthService,
     JwtStrategy,
@@ -47,4 +42,3 @@ import { EmailModule } from '../common/services/email/email.module';
 })
 export class AuthenticationModule {}
 export { AuthenticationModule as AuthModule };
-

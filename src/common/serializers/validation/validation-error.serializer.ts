@@ -13,4 +13,3 @@ export class ValidationErrorSerializer {
     this.timestamp = new Date().toISOString();
   }
 }
-

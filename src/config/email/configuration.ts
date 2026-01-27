@@ -10,7 +10,7 @@ export default () => ({
     from: process.env.EMAIL_FROM || 'noreply@example.com',
     fromName: process.env.EMAIL_FROM_NAME || 'Health Hub',
     verificationUrl: process.env.EMAIL_VERIFICATION_URL || 'http://localhost:3000/verify-email',
-    passwordResetUrl: process.env.EMAIL_PASSWORD_RESET_URL || 'http://localhost:3000/reset-password',
+    passwordResetUrl:
+      process.env.EMAIL_PASSWORD_RESET_URL || 'http://localhost:3000/reset-password',
   },
 });
-
