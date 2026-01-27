@@ -58,7 +58,7 @@ jobs:
             
             # Pull latest changes
             git fetch origin
-            git reset --hard origin/master || git reset --hard origin/main
+            git reset --hard origin/main
             
             # Install dependencies
             npm install --production --legacy-peer-deps
