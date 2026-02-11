@@ -22,7 +22,11 @@ async function bootstrap() {
   const appConfigService = app.get(AppConfigService);
 
   const fastifyInstance = app.getHttpAdapter().getInstance();
-  
+  await fastifyInstance.register(require('@fastify/multipart'), {
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+    attachFieldsToBody: true, // so multipart create can read "data" field from body
+  });
+
   await app.init();
   const moduleRef = app.select(AuthenticationModule);
   const authService = moduleRef.get(AuthService, { strict: false });

@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { StorageConfigModule } from '../../config/storage/config.module';
 import { Organization } from './entities/organization.entity';
 import { OrganizationType } from './entities/organization-type.entity';
 import { OrganizationTypeAssignment } from './entities/organization-type-assignment.entity';
@@ -8,6 +10,7 @@ import { OrganizationRolePermission } from './entities/organization-role-permiss
 import { Referral } from './entities/referral.entity';
 import { ReferralOrganization } from './entities/referral-organization.entity';
 import { ReferralMessage } from './entities/referral-message.entity';
+import { ReferralDocument } from './entities/referral-document.entity';
 import { ReferralLastRead } from './entities/referral-last-read.entity';
 import { Employee } from '../employees/entities/employee.entity';
 import { User } from '../../authentication/entities/user.entity';
@@ -21,6 +24,7 @@ import { OrganizationRoleService } from './services/organization-role.service';
 import { OrganizationPermissionService } from './services/organization-permission.service';
 import { ReferralsService } from './services/referrals.service';
 import { ReferralMessagesService } from './services/referral-messages.service';
+import { ReferralDocumentStorageService } from './services/referral-document-storage.service';
 import { OrganizationsController } from './controllers/organizations.controller';
 import { OrganizationTypesController } from './controllers/organization-types.controller';
 import { ReferralsController } from './controllers/referrals.controller';
@@ -31,6 +35,8 @@ import { ReferralMessagesGateway } from './gateways/referral-messages.gateway';
 
 @Module({
   imports: [
+    ConfigModule,
+    StorageConfigModule,
     TypeOrmModule.forFeature([
       Organization,
       OrganizationType,
@@ -42,6 +48,7 @@ import { ReferralMessagesGateway } from './gateways/referral-messages.gateway';
       Referral,
       ReferralOrganization,
       ReferralMessage,
+      ReferralDocument,
       ReferralLastRead,
       Patient,
     ]),
@@ -61,6 +68,7 @@ import { ReferralMessagesGateway } from './gateways/referral-messages.gateway';
     OrganizationPermissionService,
     ReferralsService,
     ReferralMessagesService,
+    ReferralDocumentStorageService,
     OrganizationRepository,
     ReferralRepository,
     OrganizationRoleGuard,

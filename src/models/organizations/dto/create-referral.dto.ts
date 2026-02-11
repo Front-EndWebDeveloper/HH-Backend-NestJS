@@ -5,13 +5,13 @@ import {
   IsArray,
   IsUUID,
   IsInt,
-  Min,
   MaxLength,
   ValidateNested,
   ArrayMinSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreatePatientForReferralDto } from './create-patient-for-referral.dto';
+import { ReferralDocumentItemDto } from './referral-document-item.dto';
 
 export class CreateReferralDto {
   @IsOptional()
@@ -60,4 +60,11 @@ export class CreateReferralDto {
   @IsArray()
   @IsString({ each: true })
   disciplines?: string[];
+
+  /** Patient/referral documents to include (file_name + file_url from prior upload). */
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ReferralDocumentItemDto)
+  documents?: ReferralDocumentItemDto[];
 }

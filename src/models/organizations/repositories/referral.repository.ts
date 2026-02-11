@@ -8,6 +8,7 @@ export interface ReferralListFilters {
   search?: string;
   page?: number;
   limit?: number;
+  assigned_to_me?: boolean;
 }
 
 @Injectable()
@@ -30,6 +31,7 @@ export class ReferralRepository extends Repository<Referral> {
       .leftJoinAndSelect('referral.referralOrganizations', 'ro')
       .leftJoinAndSelect('ro.organization', 'roOrg')
       .leftJoinAndSelect('roOrg.profile', 'roOrgProfile')
+      .leftJoinAndSelect('referral.referralDocuments', 'referralDocuments')
       .where('referral.sending_organization_id = :organizationId', { organizationId });
 
     if (status) {
@@ -57,7 +59,7 @@ export class ReferralRepository extends Repository<Referral> {
     organizationId: string,
     filters: ReferralListFilters,
   ): Promise<{ data: Referral[]; total: number }> {
-    const { status, organization_type_id, search, page = 1, limit = 20 } = filters;
+    const { status, organization_type_id, search, assigned_to_me, page = 1, limit = 20 } = filters;
     const qb = this.createQueryBuilder('referral')
       .innerJoin('referral.referralOrganizations', 'ro', 'ro.organization_id = :organizationId', {
         organizationId,
@@ -70,10 +72,14 @@ export class ReferralRepository extends Repository<Referral> {
       .leftJoinAndSelect('referral.referralOrganizations', 'roAll')
       .leftJoinAndSelect('roAll.organization', 'roOrg')
       .leftJoinAndSelect('roOrg.profile', 'roOrgProfile')
+      .leftJoinAndSelect('referral.referralDocuments', 'referralDocuments')
       .where('1=1');
 
     if (status) {
       qb.andWhere('referral.status = :status', { status });
+    }
+    if (assigned_to_me === true) {
+      qb.andWhere('referral.selected_organization_id = :organizationId', { organizationId });
     }
     if (organization_type_id !== undefined) {
       qb.andWhere('referral.organization_type_id = :organization_type_id', { organization_type_id });
@@ -107,6 +113,7 @@ export class ReferralRepository extends Repository<Referral> {
         'referralOrganizations',
         'referralOrganizations.organization',
         'referralOrganizations.organization.profile',
+        'referralDocuments',
       ],
     });
   }

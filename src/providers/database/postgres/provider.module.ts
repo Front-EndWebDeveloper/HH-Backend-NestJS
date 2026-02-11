@@ -12,9 +12,6 @@ import { PostgresConfigService } from '../../../config/database/postgres/config.
         const host = postgresConfigService.host;
         const isLocalhost = host === 'localhost' || host === '127.0.0.1';
         
-        // SSL configuration: only use SSL if:
-        // 1. Production AND remote database (not localhost) AND SSL certificates provided
-        // 2. OR explicitly configured via DB_USE_SSL=true
         let sslConfig: boolean | object = false;
         
         if (isProduction && !isLocalhost) {

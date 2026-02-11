@@ -19,4 +19,3 @@ export class QueryOrganizationDto {
   @Type(() => Number)
   limit?: number = 20;
 }
-

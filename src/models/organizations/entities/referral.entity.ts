@@ -13,6 +13,7 @@ import { Organization } from './organization.entity';
 import { OrganizationType } from './organization-type.entity';
 import { Patient } from '../../patients/entities/patient.entity';
 import { ReferralOrganization } from './referral-organization.entity';
+import { ReferralDocument } from './referral-document.entity';
 
 @Entity('referrals')
 @Index(['sending_organization_id'])
@@ -84,4 +85,7 @@ export class Referral {
 
   @OneToMany(() => ReferralOrganization, (ro) => ro.referral)
   referralOrganizations: ReferralOrganization[];
+
+  @OneToMany(() => ReferralDocument, (doc) => doc.referral)
+  referralDocuments: ReferralDocument[];
 }

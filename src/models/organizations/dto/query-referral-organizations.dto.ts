@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsInt, Min, Max } from 'class-validator';
+import { IsOptional, IsString, IsInt, Min, Max, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class QueryReferralOrganizationsDto {
@@ -9,6 +9,11 @@ export class QueryReferralOrganizationsDto {
   @IsOptional()
   @IsString()
   organization_type?: string;
+
+  /** Exclude this organization from results (e.g. current sender org when selecting receivers). */
+  @IsOptional()
+  @IsUUID()
+  exclude_organization_id?: string;
 
   @IsOptional()
   @IsInt()

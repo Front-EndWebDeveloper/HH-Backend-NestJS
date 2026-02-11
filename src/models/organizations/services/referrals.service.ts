@@ -9,6 +9,7 @@ import { Repository, DataSource, In } from 'typeorm';
 import { Referral } from '../entities/referral.entity';
 import { ReferralOrganization } from '../entities/referral-organization.entity';
 import { ReferralMessage } from '../entities/referral-message.entity';
+import { ReferralDocument } from '../entities/referral-document.entity';
 import { Organization } from '../entities/organization.entity';
 import { OrganizationType } from '../entities/organization-type.entity';
 import { Patient } from '../../patients/entities/patient.entity';
@@ -32,6 +33,8 @@ export class ReferralsService {
     private referralOrganizationRepository: Repository<ReferralOrganization>,
     @InjectRepository(ReferralMessage)
     private referralMessageRepository: Repository<ReferralMessage>,
+    @InjectRepository(ReferralDocument)
+    private referralDocumentRepository: Repository<ReferralDocument>,
     @InjectRepository(Organization)
     private organizationRepository: Repository<Organization>,
     @InjectRepository(OrganizationType)
@@ -136,6 +139,17 @@ export class ReferralsService {
       });
       await queryRunner.manager.save(ReferralMessage, systemMsg);
 
+      if (dto.documents?.length) {
+        for (const doc of dto.documents) {
+          const refDoc = this.referralDocumentRepository.create({
+            referral_id: savedReferral.id,
+            file_name: doc.file_name,
+            file_url: doc.file_url,
+          });
+          await queryRunner.manager.save(ReferralDocument, refDoc);
+        }
+      }
+
       await queryRunner.commitTransaction();
       try {
         await this.auditLogService.log({
@@ -180,6 +194,7 @@ export class ReferralsService {
       search: queryDto.search,
       page: queryDto.page ?? 1,
       limit: queryDto.limit ?? 20,
+      assigned_to_me: queryDto.assigned_to_me,
     };
     const { data, total } =
       queryDto.scope === 'sent'
@@ -232,6 +247,24 @@ export class ReferralsService {
     ro.proposed_terms = dto.proposed_terms ?? ro.proposed_terms;
     ro.notes = dto.notes ?? ro.notes;
     await this.referralOrganizationRepository.save(ro);
+
+    const receiverCount = referral.referralOrganizations?.length ?? 0;
+    const isOnlyReceiver = receiverCount === 1;
+    const isSelectedOrg = referral.selected_organization_id === organizationId;
+
+    if (referral.selected_organization_id === null && isOnlyReceiver) {
+      // Single receiver: auto-select this org and set referral status from their response
+      referral.selected_organization_id = organizationId;
+      referral.status = dto.response_status;
+      await this.referralRepository.save(referral);
+      ro.assignment_outcome = 'assigned_to_us';
+      await this.referralOrganizationRepository.save(ro);
+    } else if (isSelectedOrg) {
+      // Already assigned to this org: their response drives referral-level status
+      referral.status = dto.response_status;
+      await this.referralRepository.save(referral);
+    }
+
     const updated = await this.referralRepository.findByIdWithRelations(referralId);
     return this.serializer.serialize(updated!);
   }
@@ -257,6 +290,13 @@ export class ReferralsService {
     );
     if (!ro) throw new BadRequestException('Organization is not a receiver of this referral');
     referral.selected_organization_id = dto.organization_id;
+    const selectedOrgResponse = ro.response_status;
+    referral.status =
+      selectedOrgResponse === 'accepted' ||
+      selectedOrgResponse === 'declined' ||
+      selectedOrgResponse === 'negotiation'
+        ? selectedOrgResponse
+        : 'assigned';
     await this.referralRepository.save(referral);
     for (const r of referral.referralOrganizations ?? []) {
       r.assignment_outcome =

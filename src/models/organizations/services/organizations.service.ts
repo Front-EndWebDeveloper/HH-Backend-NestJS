@@ -201,6 +201,11 @@ export class OrganizationsService {
         qb.andWhere('ot.name = :typeName', { typeName: typeParam });
       }
     }
+    if (query.exclude_organization_id) {
+      qb.andWhere('org.id != :excludeOrganizationId', {
+        excludeOrganizationId: query.exclude_organization_id,
+      });
+    }
 
     const raw = await qb.getRawMany<{ id: string; organization_name: string; organization_type: string }>();
     return raw.map((r) => ({

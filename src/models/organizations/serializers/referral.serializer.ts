@@ -6,7 +6,6 @@ export class ReferralSerializer {
     const patient = referral.patient;
     const patientProfile = patient?.profile;
     const sendingOrg = referral.sendingOrganization;
-    const sendingOrgProfile = sendingOrg?.profile;
 
     return {
       id: referral.id,
@@ -28,8 +27,16 @@ export class ReferralSerializer {
       created_at: referral.created_at,
       updated_at: referral.updated_at,
       ...(referral.referralOrganizations && referral.referralOrganizations.length > 0 && {
-        receiving_orgs: referral.referralOrganizations.map((ro) => this.serializeReferralOrg(ro)),
+        receiving_orgs: referral.referralOrganizations.map((ro) =>
+          this.serializeReferralOrg(ro, referral.selected_organization_id),
+        ),
       }),
+      documents: (referral.referralDocuments ?? []).map((d) => ({
+        id: d.id,
+        file_name: d.file_name,
+        file_url: d.file_url,
+        created_at: d.created_at,
+      })),
     };
   }
 
@@ -37,9 +44,13 @@ export class ReferralSerializer {
     return referrals.map((r) => this.serialize(r));
   }
 
-  private serializeReferralOrg(ro: ReferralOrganization): any {
+  private serializeReferralOrg(
+    ro: ReferralOrganization,
+    selectedOrganizationId: string | null,
+  ): any {
     const org = ro.organization;
-    const profile = org?.profile;
+    const isSelectedOrg =
+      selectedOrganizationId !== null && ro.organization_id === selectedOrganizationId;
     return {
       org_id: ro.organization_id,
       org_name: org?.organization_name ?? null,
@@ -48,6 +59,8 @@ export class ReferralSerializer {
       proposed_terms: ro.proposed_terms,
       notes: ro.notes,
       assignment_outcome: ro.assignment_outcome,
+      /** True if this org is the one the sender assigned the referral to (only one per referral). */
+      is_selected_organization: isSelectedOrg,
     };
   }
 }

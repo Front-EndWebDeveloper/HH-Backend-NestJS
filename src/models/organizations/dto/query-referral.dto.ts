@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsInt, Min, Max, IsIn } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsInt, Min, Max, IsIn, IsBoolean } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 
 export class QueryReferralDto {
   @IsString()
@@ -8,7 +8,16 @@ export class QueryReferralDto {
 
   @IsOptional()
   @IsString()
+  @IsIn(['pending', 'assigned', 'accepted', 'declined', 'negotiation'])
   status?: string;
+
+  /** When scope=received, filter to referrals assigned to the current organization. */
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) =>
+    value === undefined || value === '' ? undefined : value === 'true' || value === true,
+  )
+  assigned_to_me?: boolean;
 
   @IsOptional()
   @IsInt()
