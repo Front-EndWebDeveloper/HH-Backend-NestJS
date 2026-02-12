@@ -35,7 +35,17 @@ export class ReferralRepository extends Repository<Referral> {
       .where('referral.sending_organization_id = :organizationId', { organizationId });
 
     if (status) {
-      qb.andWhere('referral.status = :status', { status });
+      if (status === 'assigned') {
+        qb.andWhere('referral.selected_organization_id IS NOT NULL');
+        qb.andWhere(
+          `EXISTS (SELECT 1 FROM referral_organizations rof WHERE rof.referral_id = referral.id AND rof.organization_id = referral.selected_organization_id AND rof.response_status = 'assigned')`,
+        );
+      } else {
+        qb.andWhere(
+          `EXISTS (SELECT 1 FROM referral_organizations rof WHERE rof.referral_id = referral.id AND rof.response_status = :status)`,
+          { status },
+        );
+      }
     }
     if (organization_type_id !== undefined) {
       qb.andWhere('referral.organization_type_id = :organization_type_id', { organization_type_id });
@@ -76,7 +86,7 @@ export class ReferralRepository extends Repository<Referral> {
       .where('1=1');
 
     if (status) {
-      qb.andWhere('referral.status = :status', { status });
+      qb.andWhere('ro.response_status = :status', { status });
     }
     if (assigned_to_me === true) {
       qb.andWhere('referral.selected_organization_id = :organizationId', { organizationId });

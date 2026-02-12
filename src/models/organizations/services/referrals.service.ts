@@ -111,7 +111,6 @@ export class ReferralsService {
       const referral = this.referralRepository.create({
         public_id: publicId,
         organization_type_id: dto.organization_type_id,
-        status: 'pending',
         urgency: dto.urgency,
         patient_id: patientId,
         sending_organization_id: organizationId,
@@ -127,7 +126,6 @@ export class ReferralsService {
           referral_id: savedReferral.id,
           organization_id: orgId,
           response_status: 'pending',
-          assignment_outcome: 'pending',
         });
         await queryRunner.manager.save(ReferralOrganization, ro);
       }
@@ -247,24 +245,6 @@ export class ReferralsService {
     ro.proposed_terms = dto.proposed_terms ?? ro.proposed_terms;
     ro.notes = dto.notes ?? ro.notes;
     await this.referralOrganizationRepository.save(ro);
-
-    const receiverCount = referral.referralOrganizations?.length ?? 0;
-    const isOnlyReceiver = receiverCount === 1;
-    const isSelectedOrg = referral.selected_organization_id === organizationId;
-
-    if (referral.selected_organization_id === null && isOnlyReceiver) {
-      // Single receiver: auto-select this org and set referral status from their response
-      referral.selected_organization_id = organizationId;
-      referral.status = dto.response_status;
-      await this.referralRepository.save(referral);
-      ro.assignment_outcome = 'assigned_to_us';
-      await this.referralOrganizationRepository.save(ro);
-    } else if (isSelectedOrg) {
-      // Already assigned to this org: their response drives referral-level status
-      referral.status = dto.response_status;
-      await this.referralRepository.save(referral);
-    }
-
     const updated = await this.referralRepository.findByIdWithRelations(referralId);
     return this.serializer.serialize(updated!);
   }
@@ -290,19 +270,9 @@ export class ReferralsService {
     );
     if (!ro) throw new BadRequestException('Organization is not a receiver of this referral');
     referral.selected_organization_id = dto.organization_id;
-    const selectedOrgResponse = ro.response_status;
-    referral.status =
-      selectedOrgResponse === 'accepted' ||
-      selectedOrgResponse === 'declined' ||
-      selectedOrgResponse === 'negotiation'
-        ? selectedOrgResponse
-        : 'assigned';
+    ro.response_status = 'assigned';
+    await this.referralOrganizationRepository.save(ro);
     await this.referralRepository.save(referral);
-    for (const r of referral.referralOrganizations ?? []) {
-      r.assignment_outcome =
-        r.organization_id === dto.organization_id ? 'assigned_to_us' : 'assigned_to_other';
-      await this.referralOrganizationRepository.save(r);
-    }
     const updated = await this.referralRepository.findByIdWithRelations(referralId);
     return this.serializer.serialize(updated!);
   }
@@ -327,7 +297,6 @@ export class ReferralsService {
         response_date: ro.response_date,
         proposed_terms: ro.proposed_terms,
         notes: ro.notes,
-        assignment_outcome: ro.assignment_outcome,
       })) ?? []
     );
   }

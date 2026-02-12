@@ -38,9 +38,6 @@ export class ReferralOrganization {
   @Column({ type: 'text', nullable: true })
   notes: string | null;
 
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  assignment_outcome: string | null;
-
   @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 

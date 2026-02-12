@@ -18,7 +18,6 @@ import { ReferralDocument } from './referral-document.entity';
 @Entity('referrals')
 @Index(['sending_organization_id'])
 @Index(['patient_id'])
-@Index(['status'])
 @Index(['organization_type_id'])
 @Index(['created_at'])
 export class Referral {
@@ -30,9 +29,6 @@ export class Referral {
 
   @Column({ type: 'smallint' })
   organization_type_id: number;
-
-  @Column({ type: 'varchar', length: 20 })
-  status: string;
 
   @Column({ type: 'varchar', length: 20 })
   urgency: string;
