@@ -10,7 +10,9 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, In } from 'typeorm';
 import { Organization } from '../../entities/organization.entity';
+import { OrganizationFeature } from '../../entities/organization-feature.entity';
 import { OrganizationStaff } from '../entities/organization-staff.entity';
+import { OrganizationStaffRolePermission } from '../entities/organization-staff-role-permission.entity';
 import { StaffRole } from '../entities/staff-role.entity';
 import { OrganizationRoleService } from '../../services/organization-role.service';
 import { AuthService } from '../../../../authentication/services/auth.service';
@@ -33,6 +35,10 @@ export class OrganizationStaffService {
     private organizationStaffRepository: Repository<OrganizationStaff>,
     @InjectRepository(StaffRole)
     private staffRoleRepository: Repository<StaffRole>,
+    @InjectRepository(OrganizationFeature)
+    private organizationFeatureRepository: Repository<OrganizationFeature>,
+    @InjectRepository(OrganizationStaffRolePermission)
+    private staffRolePermissionRepository: Repository<OrganizationStaffRolePermission>,
     private organizationRoleService: OrganizationRoleService,
     private authService: AuthService,
     private emailService: EmailService,
@@ -90,6 +96,17 @@ export class OrganizationStaffService {
       throw new BadRequestException('One or more staff role IDs are invalid.');
     }
 
+    let featureIds: string[] = [];
+    if (dto.feature_ids?.length) {
+      const features = await this.organizationFeatureRepository.find({
+        where: { id: In(dto.feature_ids) },
+      });
+      if (features.length !== dto.feature_ids.length) {
+        throw new BadRequestException('One or more feature IDs are invalid.');
+      }
+      featureIds = dto.feature_ids;
+    }
+
     const { user, temporaryPassword } = await this.authService.createUserWithTemporaryPassword({
       email: dto.email,
       firstName: dto.firstName,
@@ -116,6 +133,32 @@ export class OrganizationStaffService {
         });
         const saved = await queryRunner.manager.save(OrganizationStaff, row);
         createdRows.push(saved);
+      }
+
+      if (featureIds.length > 0) {
+        for (const staffRow of createdRows) {
+          for (const featureId of featureIds) {
+            const existing = await queryRunner.manager.findOne(OrganizationStaffRolePermission, {
+              where: {
+                organization_id: organizationId,
+                staff_role_id: staffRow.staff_role_id,
+                feature_id: featureId,
+              },
+            });
+            if (!existing) {
+              const perm = queryRunner.manager.create(OrganizationStaffRolePermission, {
+                organization_id: organizationId,
+                staff_role_id: staffRow.staff_role_id,
+                feature_id: featureId,
+                has_access: true,
+              });
+              await queryRunner.manager.save(OrganizationStaffRolePermission, perm);
+            } else {
+              existing.has_access = true;
+              await queryRunner.manager.save(OrganizationStaffRolePermission, existing);
+            }
+          }
+        }
       }
 
       await queryRunner.commitTransaction();
@@ -234,8 +277,9 @@ export class OrganizationStaffService {
 
     const byUser = new Map<
       string,
-      { user_id: string; email: string; firstName: string; lastName: string; roles: any[]; status: string; department: string | null; position_title: string | null }
+      { user_id: string; email: string; firstName: string; lastName: string; roles: any[]; status: string; department: string | null; position_title: string | null; features: { id: string; code: string; name: string | null }[] }
     >();
+    const staffRoleIdsByUser = new Map<string, string[]>();
     for (const row of rows) {
       const u = row.user;
       if (!byUser.has(row.user_id)) {
@@ -248,13 +292,23 @@ export class OrganizationStaffService {
           status: row.status,
           department: row.department,
           position_title: row.position_title,
+          features: [],
         });
+        staffRoleIdsByUser.set(row.user_id, []);
       }
       const rec = byUser.get(row.user_id)!;
       rec.roles.push({ id: row.staffRole.id, name: row.staffRole.name });
+      const roleIds = staffRoleIdsByUser.get(row.user_id)!;
+      if (!roleIds.includes(row.staff_role_id)) roleIds.push(row.staff_role_id);
     }
 
     const data = Array.from(byUser.values());
+    for (const rec of data) {
+      rec.features = await this.organizationRoleService.getFeatureDetailsForStaffRoles(
+        organizationId,
+        staffRoleIdsByUser.get(rec.user_id) ?? [],
+      );
+    }
 
     return { data, total, page, limit };
   }
@@ -266,7 +320,7 @@ export class OrganizationStaffService {
     organizationId: string,
     staffUserId: string,
     userId: string,
-  ): Promise<{ user_id: string; email: string; firstName: string; lastName: string; roles: any[]; status: string; department: string | null; position_title: string | null }> {
+  ): Promise<{ user_id: string; email: string; firstName: string; lastName: string; roles: any[]; status: string; department: string | null; position_title: string | null; features: { id: string; code: string; name: string | null }[] }> {
     const canAccess = await this.organizationRoleService.hasAnyRoleInOrganization(userId, organizationId, [
       'OWNER',
       'HR',
@@ -285,6 +339,11 @@ export class OrganizationStaffService {
     }
 
     const u = rows[0].user;
+    const staffRoleIds = rows.map((r) => r.staff_role_id);
+    const features = await this.organizationRoleService.getFeatureDetailsForStaffRoles(
+      organizationId,
+      staffRoleIds,
+    );
     return {
       user_id: u.id,
       email: u.email,
@@ -294,6 +353,7 @@ export class OrganizationStaffService {
       status: rows[0].status,
       department: rows[0].department,
       position_title: rows[0].position_title,
+      features,
     };
   }
 
@@ -330,6 +390,32 @@ export class OrganizationStaffService {
         { organization_id: organizationId, user_id: staffUserId },
         updatePayload,
       );
+    }
+
+    if (dto.feature_ids !== undefined) {
+      const featureIds = dto.feature_ids;
+      const features = await this.organizationFeatureRepository.find({
+        where: { id: In(featureIds) },
+      });
+      if (features.length !== featureIds.length) {
+        throw new BadRequestException('One or more feature IDs are invalid.');
+      }
+      const staffRoleIds = [...new Set(rows.map((r) => r.staff_role_id))];
+      await this.staffRolePermissionRepository.delete({
+        organization_id: organizationId,
+        staff_role_id: In(staffRoleIds),
+      });
+      for (const row of rows) {
+        for (const featureId of featureIds) {
+          const perm = this.staffRolePermissionRepository.create({
+            organization_id: organizationId,
+            staff_role_id: row.staff_role_id,
+            feature_id: featureId,
+            has_access: true,
+          });
+          await this.staffRolePermissionRepository.save(perm);
+        }
+      }
     }
 
     await this.auditLogService.log({

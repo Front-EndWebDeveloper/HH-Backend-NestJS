@@ -12,6 +12,7 @@ import {
   HttpCode,
   HttpStatus,
   Req,
+  ForbiddenException,
 } from '@nestjs/common';
 import type { FastifyRequest } from 'fastify';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
@@ -21,6 +22,7 @@ import { LoggedInUser } from '../../../common/decorators/requests/logged-in-user
 import { SuccessHelper } from '../../../common/helpers/responses/success.helper';
 import type { UserWithRolesInterface } from '../../../common/interfaces/user-with-roles.interface';
 import { OrganizationsService } from '../services/organizations.service';
+import { OrganizationRoleService } from '../services/organization-role.service';
 import { CreateOrganizationDto } from '../dto/create-organization.dto';
 import { UpdateOrganizationDto } from '../dto/update-organization.dto';
 import { QueryOrganizationDto } from '../dto/query-organization.dto';
@@ -32,7 +34,10 @@ import { UpdateOrganizationPermissionDto } from '../dto/update-organization-perm
 @Controller('v1/api/organization')
 @UseGuards(JwtAuthGuard)
 export class OrganizationsController {
-  constructor(private readonly organizationsService: OrganizationsService) {}
+  constructor(
+    private readonly organizationsService: OrganizationsService,
+    private readonly organizationRoleService: OrganizationRoleService,
+  ) {}
 
   private getIpAddress(request: FastifyRequest): string {
     const forwarded = request.headers['x-forwarded-for'];
@@ -85,7 +90,33 @@ export class OrganizationsController {
   @HttpCode(HttpStatus.OK)
   async getMyOrganization(@LoggedInUser() user: UserWithRolesInterface) {
     const result = await this.organizationsService.findMyOrganization(user.userId);
+    return SuccessHelper.createSuccessResponse(result);
+  }
 
+  @Get('my-organizations')
+  @HttpCode(HttpStatus.OK)
+  async getMyOrganizations(@LoggedInUser() user: UserWithRolesInterface) {
+    const result = await this.organizationsService.findMyOrganizations(user.userId);
+    return SuccessHelper.createSuccessResponse(result);
+  }
+
+  @Get(':organizationId/staff-permissions')
+  @HttpCode(HttpStatus.OK)
+  async getStaffPermissions(
+    @Param('organizationId') organizationId: string,
+    @LoggedInUser() user: UserWithRolesInterface,
+  ) {
+    const canAccess = await this.organizationRoleService.canAccessOrganization(
+      user.userId,
+      organizationId,
+    );
+    if (!canAccess) {
+      throw new ForbiddenException('You do not have access to this organization');
+    }
+    const result = await this.organizationRoleService.getStaffPermissions(
+      user.userId,
+      organizationId,
+    );
     return SuccessHelper.createSuccessResponse(result);
   }
 

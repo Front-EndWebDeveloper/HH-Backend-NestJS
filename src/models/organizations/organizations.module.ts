@@ -15,6 +15,7 @@ import { ReferralLastRead } from './entities/referral-last-read.entity';
 import { User } from '../../authentication/entities/user.entity';
 import { StaffRole } from './staff-management/entities/staff-role.entity';
 import { OrganizationStaff } from './staff-management/entities/organization-staff.entity';
+import { OrganizationFeature } from './entities/organization-feature.entity';
 import { OrganizationStaffRolePermission } from './staff-management/entities/organization-staff-role-permission.entity';
 import { Patient } from '../patients/entities/patient.entity';
 import { AuthenticationModule } from '../../authentication/auth.module';
@@ -29,6 +30,7 @@ import { ReferralsService } from './services/referrals.service';
 import { ReferralMessagesService } from './services/referral-messages.service';
 import { ReferralDocumentStorageService } from './services/referral-document-storage.service';
 import { OrganizationsController } from './controllers/organizations.controller';
+import { OrganizationFeaturesController } from './controllers/organization-features.controller';
 import { OrganizationTypesController } from './controllers/organization-types.controller';
 import { ReferralsController } from './controllers/referrals.controller';
 import { ReferralOrganizationsController } from './controllers/referral-organizations.controller';
@@ -48,6 +50,7 @@ import { ReferralMessagesGateway } from './gateways/referral-messages.gateway';
       OrganizationTypeAssignment,
       OrganizationProfile,
       OrganizationRolePermission,
+      OrganizationFeature,
       StaffRole,
       OrganizationStaff,
       OrganizationStaffRolePermission,
@@ -66,6 +69,7 @@ import { ReferralMessagesGateway } from './gateways/referral-messages.gateway';
   ],
   controllers: [
     OrganizationsController,
+    OrganizationFeaturesController,
     OrganizationTypesController,
     ReferralsController,
     ReferralOrganizationsController,

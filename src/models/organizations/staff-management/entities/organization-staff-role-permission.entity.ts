@@ -10,13 +10,14 @@ import {
   Unique,
 } from 'typeorm';
 import { Organization } from '../../entities/organization.entity';
+import { OrganizationFeature } from '../../entities/organization-feature.entity';
 import { StaffRole } from './staff-role.entity';
 
 @Entity('organization_staff_role_permissions')
-@Unique(['organization_id', 'staff_role_id', 'feature'])
+@Unique(['organization_id', 'staff_role_id', 'feature_id'])
 @Index(['organization_id'])
 @Index(['staff_role_id'])
-@Index(['feature'])
+@Index(['feature_id'])
 export class OrganizationStaffRolePermission {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -27,8 +28,8 @@ export class OrganizationStaffRolePermission {
   @Column({ type: 'uuid' })
   staff_role_id: string;
 
-  @Column({ type: 'varchar', length: 100 })
-  feature: string;
+  @Column({ type: 'uuid' })
+  feature_id: string;
 
   @Column({ type: 'boolean', default: false })
   has_access: boolean;
@@ -46,4 +47,8 @@ export class OrganizationStaffRolePermission {
   @ManyToOne(() => StaffRole, (role) => role.permissions, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'staff_role_id' })
   staffRole: StaffRole;
+
+  @ManyToOne(() => OrganizationFeature, (f) => f.staffRolePermissions, { onDelete: 'RESTRICT' })
+  @JoinColumn({ name: 'feature_id' })
+  organizationFeature: OrganizationFeature;
 }

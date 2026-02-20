@@ -8,7 +8,7 @@ export class Role {
   id: number;
 
   @Column({ type: 'varchar', length: 50, unique: true })
-  name: string; // ADMIN | EMPLOYEE | PATIENT | ORGANIZATION | BLOGGER
+  name: string;
 
   @Column({ type: 'text', nullable: true })
   description: string;

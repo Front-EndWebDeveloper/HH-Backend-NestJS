@@ -15,16 +15,16 @@ export class PermissionService {
     // Map permissions to roles (basic implementation)
     const permissionRoleMap: Record<string, string[]> = {
       'users.create': ['ADMIN'],
-      'users.read': ['ADMIN', 'EMPLOYEE'],
+      'users.read': ['ADMIN', 'STAFF'],
       'users.update': ['ADMIN'],
       'users.delete': ['ADMIN'],
       'organizations.create': ['ADMIN'],
-      'organizations.read': ['ADMIN', 'EMPLOYEE', 'ORGANIZATION'],
+      'organizations.read': ['ADMIN', 'STAFF', 'ORGANIZATION'],
       'organizations.update': ['ADMIN', 'ORGANIZATION'],
       'organizations.delete': ['ADMIN'],
-      'patients.create': ['ADMIN', 'EMPLOYEE'],
-      'patients.read': ['ADMIN', 'EMPLOYEE', 'PROVIDER'],
-      'patients.update': ['ADMIN', 'EMPLOYEE', 'PROVIDER'],
+      'patients.create': ['ADMIN', 'STAFF'],
+      'patients.read': ['ADMIN', 'STAFF', 'PROVIDER'],
+      'patients.update': ['ADMIN', 'STAFF', 'PROVIDER'],
       'patients.delete': ['ADMIN'],
     };
 

@@ -1,10 +1,15 @@
-import { IsOptional, IsString, IsUUID, MaxLength, IsIn } from 'class-validator';
+import { IsOptional, IsString, IsUUID, MaxLength, IsIn, IsArray } from 'class-validator';
 
 export class UpdateOrganizationStaffDto {
   @IsOptional()
   @IsString()
   @IsIn(['ACTIVE', 'INACTIVE', 'TERMINATED'])
   status?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  feature_ids?: string[];
 
   @IsOptional()
   @IsString()

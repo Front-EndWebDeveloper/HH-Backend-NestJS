@@ -82,6 +82,19 @@ export class OnboardingStatusService {
       return this.getProviderOnboardingStatus(userId);
     }
 
+    if (normalizedRoles.includes('STAFF')) {
+      return {
+        currentStep: 'completed',
+        nextAction: 'navigate_to_dashboard',
+        redirectPath: '/organization/dashboard',
+        requiresAction: false,
+        details: {
+          hasRole: true,
+          role: 'STAFF',
+        },
+      };
+    }
+
     if (normalizedRoles.includes('EMPLOYEE')) {
       return this.getEmployeeOnboardingStatus(userId);
     }

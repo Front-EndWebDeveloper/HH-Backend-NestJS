@@ -1,9 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Organization } from '../entities/organization.entity';
+import { OrganizationFeature } from '../entities/organization-feature.entity';
 import { OrganizationRolePermission } from '../entities/organization-role-permission.entity';
 import { OrganizationStaff } from '../staff-management/entities/organization-staff.entity';
+import { OrganizationStaffRolePermission } from '../staff-management/entities/organization-staff-role-permission.entity';
 
 @Injectable()
 export class OrganizationRoleService {
@@ -14,6 +16,10 @@ export class OrganizationRoleService {
     private permissionRepository: Repository<OrganizationRolePermission>,
     @InjectRepository(OrganizationStaff)
     private organizationStaffRepository: Repository<OrganizationStaff>,
+    @InjectRepository(OrganizationStaffRolePermission)
+    private staffRolePermissionRepository: Repository<OrganizationStaffRolePermission>,
+    @InjectRepository(OrganizationFeature)
+    private organizationFeatureRepository: Repository<OrganizationFeature>,
   ) {}
 
   /**
@@ -113,5 +119,95 @@ export class OrganizationRoleService {
     });
 
     return permission?.has_access || false;
+  }
+
+  async getStaffPermissions(
+    userId: string,
+    organizationId: string,
+  ): Promise<{ staffRoles: string[]; features: string[] }> {
+    const isOwner = await this.isOrganizationOwner(userId, organizationId);
+    if (isOwner) {
+      return { staffRoles: ['OWNER'], features: ['*'] };
+    }
+
+    const staffRows = await this.organizationStaffRepository.find({
+      where: {
+        user_id: userId,
+        organization_id: organizationId,
+        status: 'ACTIVE',
+      },
+      relations: ['staffRole'],
+    });
+
+    if (staffRows.length === 0) {
+      return { staffRoles: [], features: [] };
+    }
+
+    const staffRoleIds = staffRows.map((r) => r.staff_role_id);
+    const staffRoleNames = [...new Set(staffRows.map((r) => r.staffRole?.name).filter(Boolean))] as string[];
+
+    const permissions = await this.staffRolePermissionRepository.find({
+      where: {
+        organization_id: organizationId,
+        staff_role_id: In(staffRoleIds),
+        has_access: true,
+      },
+      relations: ['organizationFeature'],
+    });
+
+    const features = [
+      ...new Set(
+        permissions
+          .map((p) => p.organizationFeature?.code)
+          .filter((code): code is string => Boolean(code)),
+      ),
+    ];
+    return { staffRoles: staffRoleNames, features };
+  }
+
+  async canAccessOrganization(userId: string, organizationId: string): Promise<boolean> {
+    const isOwner = await this.isOrganizationOwner(userId, organizationId);
+    if (isOwner) return true;
+    const count = await this.organizationStaffRepository.count({
+      where: {
+        user_id: userId,
+        organization_id: organizationId,
+        status: 'ACTIVE',
+      },
+    });
+    return count > 0;
+  }
+
+  async getOrganizationFeatures(): Promise<{ id: string; code: string; name: string | null }[]> {
+    const features = await this.organizationFeatureRepository.find({
+      order: { code: 'ASC' },
+    });
+    return features.map((f) => ({ id: f.id, code: f.code, name: f.name }));
+  }
+
+  async getFeatureDetailsForStaffRoles(
+    organizationId: string,
+    staffRoleIds: string[],
+  ): Promise<{ id: string; code: string; name: string | null }[]> {
+    if (staffRoleIds.length === 0) return [];
+    const permissions = await this.staffRolePermissionRepository.find({
+      where: {
+        organization_id: organizationId,
+        staff_role_id: In(staffRoleIds),
+        has_access: true,
+      },
+      relations: ['organizationFeature'],
+    });
+    const seen = new Set<string>();
+    const result: { id: string; code: string; name: string | null }[] = [];
+    for (const p of permissions) {
+      const f = p.organizationFeature;
+      if (f && !seen.has(f.id)) {
+        seen.add(f.id);
+        result.push({ id: f.id, code: f.code, name: f.name });
+      }
+    }
+    result.sort((a, b) => a.code.localeCompare(b.code));
+    return result;
   }
 }

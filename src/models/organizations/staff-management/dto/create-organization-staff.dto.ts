@@ -30,6 +30,11 @@ export class CreateOrganizationStaffDto {
   staff_role_ids: string[];
 
   @IsOptional()
+  @IsArray()
+  @IsUUID('4', { each: true })
+  feature_ids?: string[];
+
+  @IsOptional()
   @IsString()
   @MaxLength(100)
   department?: string;

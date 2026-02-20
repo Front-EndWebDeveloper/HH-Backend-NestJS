@@ -15,6 +15,18 @@ export class OrganizationRepository extends Repository<Organization> {
     });
   }
 
+  async findOrganizationsByStaffUserId(userId: string): Promise<Organization[]> {
+    return this.createQueryBuilder('org')
+      .innerJoin('organization_staff', 'os', 'os.organization_id = org.id AND os.user_id = :userId AND os.status = :status', {
+        userId,
+        status: 'ACTIVE',
+      })
+      .leftJoinAndSelect('org.profile', 'profile')
+      .leftJoinAndSelect('org.typeAssignments', 'ta')
+      .leftJoinAndSelect('ta.organizationType', 'ot')
+      .getMany();
+  }
+
   async findByIdWithRelations(id: string): Promise<Organization | null> {
     return this.findOne({
       where: { id },

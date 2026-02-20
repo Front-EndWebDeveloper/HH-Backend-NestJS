@@ -863,10 +863,6 @@ export class AuthService {
     }
   }
 
-  /**
-   * Create a user with temporary password (e.g. for organization staff).
-   * Assigns EMPLOYEE system role. Caller must create organization_staff record(s) and send email.
-   */
   async createUserWithTemporaryPassword(dto: {
     email: string;
     firstName: string;
@@ -877,9 +873,9 @@ export class AuthService {
       throw new ConflictException('User with this email already exists');
     }
 
-    const employeeRole = await this.roleRepository.findByName('EMPLOYEE');
-    if (!employeeRole) {
-      throw new NotFoundException('EMPLOYEE role not found. Ensure roles are seeded.');
+    const staffRole = await this.roleRepository.findByName('STAFF');
+    if (!staffRole) {
+      throw new NotFoundException('STAFF role not found. Ensure roles are seeded.');
     }
 
     const temporaryPassword = this.generateTemporaryPassword();
@@ -907,7 +903,7 @@ export class AuthService {
 
       const userRole = queryRunner.manager.create(UserRole, {
         user_id: savedUser.id,
-        role_id: employeeRole.id,
+        role_id: staffRole.id,
       });
       await queryRunner.manager.save(UserRole, userRole);
 

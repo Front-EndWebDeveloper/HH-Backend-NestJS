@@ -162,12 +162,26 @@ export class OrganizationsService {
 
   async findMyOrganization(userId: string): Promise<any> {
     const organization = await this.organizationRepository.findByUserId(userId);
-
-    if (!organization) {
+    if (organization) {
+      return this.organizationSerializer.serialize(organization);
+    }
+    const staffOrgs = await this.organizationRepository.findOrganizationsByStaffUserId(userId);
+    if (staffOrgs.length === 0) {
       throw new NotFoundException('You do not have an organization');
     }
+    return this.organizationSerializer.serialize(staffOrgs[0]);
+  }
 
-    return this.organizationSerializer.serialize(organization);
+  async findMyOrganizations(userId: string): Promise<{ organization: any; isOwner: boolean }[]> {
+    const owned = await this.organizationRepository.findByUserId(userId);
+    if (owned) {
+      return [{ organization: this.organizationSerializer.serialize(owned), isOwner: true }];
+    }
+    const staffOrgs = await this.organizationRepository.findOrganizationsByStaffUserId(userId);
+    return staffOrgs.map((org) => ({
+      organization: this.organizationSerializer.serialize(org),
+      isOwner: false,
+    }));
   }
 
   async findForReferralSelection(
